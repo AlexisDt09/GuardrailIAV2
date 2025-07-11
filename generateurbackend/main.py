@@ -29,9 +29,9 @@ except ImportError:
     Image = None
     io = None
 
-from dessin_pdf import creer_plan_pdf
-from dessin_dxf import creer_plan_dxf
-from utils import get_deduction_dimension, get_thickness_dimension
+from .dessin_pdf import creer_plan_pdf
+from .dessin_dxf import creer_plan_dxf
+from .utils import get_deduction_dimension, get_thickness_dimension
 
 # ===============================================
 # 2. CONFIGURATION INITIALE ET CHARGEMENT DES VARIABLES
