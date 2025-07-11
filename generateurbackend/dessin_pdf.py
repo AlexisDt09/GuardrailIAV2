@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 import unicodedata
 import math
-from utils import get_deduction_dimension, get_thickness_dimension
+from .utils import get_deduction_dimension, get_thickness_dimension
 
 
 # --- PALETTE DE COULEURS ---

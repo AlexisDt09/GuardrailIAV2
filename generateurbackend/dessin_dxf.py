@@ -10,7 +10,7 @@ from datetime import datetime
 import math
 
 # Importations des fonctions utilitaires pour obtenir les dimensions des profilés
-from utils import get_deduction_dimension, get_thickness_dimension
+from .utils import get_deduction_dimension, get_thickness_dimension
 
 # Dictionnaire des couleurs ACI (AutoCAD Color Index) pour les calques
 LAYER_COLORS = {
