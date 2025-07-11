@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Plan de Garde-Corps</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">Générateur de Dessins de Garde-Corps</h1>
+            <p class="text-slate-600 mt-2">Générez vos plans de fabrication pièce par pièce.</p>
+        </header>
+
+        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+            
+            <div class="mb-6 border-b border-slate-200">
+                <nav class="flex space-x-4" aria-label="Tabs">
+                    <button id="tab-form" class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 text-sm font-medium">
+                        Formulaire Détaillé
+                    </button>
+                    <button id="tab-ia" class="text-slate-500 hover:text-slate-700 px-3 py-2 text-sm font-medium">
+                        Assistant IA (Texte)
+                    </button>
+                    <button id="tab-schema" class="text-slate-500 hover:text-slate-700 px-3 py-2 text-sm font-medium">
+                        Analyse de Schéma
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Panneau Formulaire -->
+            <div id="content-form">
+                <form id="gardeCorpsForm" class="space-y-8">
+                    
+                    <fieldset>
+                        <legend class="text-xl font-semibold mb-4 text-slate-700 border-b border-slate-200 pb-2 w-full">1. Informations Générales</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="titre_plan" class="block text-sm font-medium text-slate-600 mb-1">Titre du Plan</label>
+                                <input type="text" id="titre_plan" name="titre_plan" placeholder="Ex: Garde-corps Terrasse" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="nom_client" class="block text-sm font-medium text-slate-600 mb-1">Nom du Client</label>
+                                <input type="text" id="nom_client" name="nom_client" placeholder="Ex: M. Dupont" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="date_chantier" class="block text-sm font-medium text-slate-600 mb-1">Date du Chantier</label>
+                                <input type="date" id="date_chantier" name="date_chantier" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend class="text-xl font-semibold mb-4 text-slate-700 border-b border-slate-200 pb-2 w-full">2. Définition des Morceaux</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nombre_morceaux" class="block text-sm font-medium text-slate-600 mb-1">Nombre de morceaux</label>
+                                <input type="number" id="nombre_morceaux" name="nombre_morceaux" value="1" min="1" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Morceaux identiques ?</label>
+                                <div class="flex items-center space-x-4">
+                                    <label><input type="radio" name="morceaux_identiques" value="oui" checked class="mr-1"> Oui</label>
+                                    <label><input type="radio" name="morceaux_identiques" value="non" class="mr-1"> Non</label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div id="morceaux_container" class="space-y-8"></div>
+
+                    <fieldset>
+                        <legend class="text-xl font-semibold mb-4 text-slate-700 border-b border-slate-200 pb-2 w-full">3. Hauteurs (Communes)</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="hauteur_totale" class="block text-sm font-medium text-slate-600 mb-1">Hauteur totale finie (mm)</label>
+                                <input type="number" id="hauteur_totale" name="hauteur_totale" value="1020" required min="1" class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                            <div>
+                                <label for="hauteur_lisse_basse" class="block text-sm font-medium text-slate-600 mb-1">Hauteur sous lisse basse (mm)</label>
+                                <input type="number" id="hauteur_lisse_basse" name="hauteur_lisse_basse" value="100" required min="0" class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend class="text-xl font-semibold mb-4 text-slate-700 border-b border-slate-200 pb-2 w-full">4. Structure (Commune)</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+                            <div>
+                                <h3 class="text-lg font-medium text-slate-800">Poteaux</h3>
+                                <input type="text" id="poteau_dims" name="poteau_dims" placeholder="Ex: 40x40x3" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-slate-800">Liaisons</h3>
+                                <input type="text" id="liaison_dims" name="liaison_dims" placeholder="Ex: Plat 50x8" class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                             <div>
+                                <h3 class="text-lg font-medium text-slate-800">Lisse Haute</h3>
+                                <input type="text" id="lissehaute_dims" name="lissehaute_dims" placeholder="Ex: Ø42.4x2" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                             <div>
+                                <h3 class="text-lg font-medium text-slate-800">Lisse Basse</h3>
+                                <input type="text" id="lissebasse_dims" name="lissebasse_dims" placeholder="Ex: 40x20x2" required class="w-full p-2 border border-slate-300 rounded-md">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend class="text-xl font-semibold mb-4 text-slate-700 border-b border-slate-200 pb-2 w-full">5. Remplissage & Fixations</legend>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            <div>
+                                <label for="remplissage_type" class="block text-sm font-medium text-slate-600 mb-1">Type de remplissage</label>
+                                <select id="remplissage_type" name="remplissage_type" class="w-full p-2 border border-slate-300 rounded-md">
+                                    <option value="barreaudage_vertical" selected>Barreaudage vertical</option>
+                                    <option value="barreaudage_horizontal">Barreaudage horizontal</option>
+                                    <option value="aucun">Aucun (structure seule)</option>
+                                </select>
+                                <div class="mt-2">
+                                     <h4 class="text-md font-medium text-slate-800">Détails des barreaux</h4>
+                                     <label for="barreau_dims" class="block text-sm font-medium text-slate-600 mb-1">Dimensions</label>
+                                     <input type="text" id="barreau_dims" name="barreau_dims" placeholder="Ex: 14x14" required class="w-full p-2 border border-slate-300 rounded-md">
+                                     <label for="ecart_barreaux" class="block text-sm font-medium text-slate-600 mb-1 mt-2">Écart maximal souhaité (mm)</label>
+                                     <input type="number" id="ecart_barreaux" name="ecart_barreaux" value="110" required min="1" class="w-full p-2 border border-slate-300 rounded-md">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="type_fixation" class="block text-sm font-medium text-slate-600 mb-1">Type de fixation</label>
+                                <select id="type_fixation" name="type_fixation" class="w-full p-2 border border-slate-300 rounded-md">
+                                    <option value="platine" selected>Sur platines</option>
+                                    <option value="scellement">En scellement</option>
+                                </select>
+                                
+                                <div id="platine_details_section" class="mt-4 space-y-3 border-t pt-4">
+                                     <h4 class="text-md font-medium text-slate-800">Détails des Platines</h4>
+                                     <input type="text" id="platine_dimensions" name="platine_dimensions" placeholder="Ex: 120x80x8" class="w-full p-2 border border-slate-300 rounded-md">
+                                     <input type="text" id="platine_trous" name="platine_trous" placeholder="Ex: 4x12" class="w-full p-2 border border-slate-300 rounded-md mt-2">
+                                     <input type="text" id="platine_entraxes" name="platine_entraxes" placeholder="Ex: 90x50" class="w-full p-2 border border-slate-300 rounded-md mt-2">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="cta-container text-center pt-4">
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700">
+                            Générer le Plan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="content-ia" class="hidden">
+                 <form id="iaForm" class="space-y-6">
+                    <fieldset>
+                         <legend class="text-xl font-semibold mb-4 text-slate-700">Description du Projet</legend>
+                         <textarea id="descriptionProjet" name="descriptionProjet" rows="8" class="w-full p-2 border rounded-md" placeholder="Ex: Je souhaite un garde-corps de 7m en 2 morceaux..."></textarea>
+                    </fieldset>
+                    <div class="text-center pt-4">
+                        <button type="submit" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700">
+                            Analyser et Pré-remplir
+                        </button>
+                    </div>
+                 </form>
+            </div>
+            
+            <div id="content-schema" class="hidden">
+                 <form id="schemaForm" class="space-y-6">
+                    <fieldset>
+                         <legend class="text-xl font-semibold mb-4 text-slate-700">Charger un Schéma</legend>
+                         <div>
+                            <label for="schemaFile" class="block text-sm font-medium text-slate-600 mb-1">Sélectionnez une image (PNG, JPG) :</label>
+                            <input type="file" id="schemaFile" name="schemaFile" accept="image/png, image/jpeg" required class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100">
+                         </div>
+                         <div id="imagePreview" class="mt-4 border border-dashed border-slate-300 rounded-lg p-4 h-64 flex justify-center items-center bg-slate-50">
+                            <span class="text-slate-500">Prévisualisation de l'image</span>
+                         </div>
+                    </fieldset>
+                    <div class="text-center pt-4">
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700">
+                            Analyser le Schéma et Pré-remplir
+                        </button>
+                    </div>
+                 </form>
+            </div>
+
+        </main>
+
+        <section id="resultat" class="mt-8 text-center"></section>
+
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

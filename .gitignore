@@ -1,0 +1,18 @@
+# Fichiers cache de Python
+__pycache__/
+*.pyc
+
+# Environnements virtuels
+.venv/
+venv/
+
+# Fichiers de secrets locaux
+.env
+
+# Fichiers de cache de test
+.pytest_cache/
+
+# Fichiers de sortie générés par l'application
+*.pdf
+*.dxf
+*.dwg
